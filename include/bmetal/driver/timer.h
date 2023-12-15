@@ -83,6 +83,11 @@ int k_timer_remove_device(struct k_timer_device *timer);
 
 #else /* CONFIG_TIMER */
 
+static inline struct k_timer_device *k_timer_get_default(void)
+{
+	return NULL;
+}
+
 static inline struct k_timer_device *k_timer_get_system(void)
 {
 	return NULL;
