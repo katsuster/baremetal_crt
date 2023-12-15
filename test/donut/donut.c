@@ -24,10 +24,13 @@ int8_t z[1760];
 int main(int argc, char *argv[])
 {
 	int sA = 1024, cA = 0, sB = 1024, cB = 0;
-	struct timeval tv_s, tv_e, tv_v, tv_d;
+	struct timeval demo_init, tv_s, tv_e;
+	struct timeval tv_wall, tv_calc, tv_draw;
 
 	// hide cursor
 	printf("\x1b[?25l");
+
+	gettimeofday(&demo_init, NULL);
 
 	for (;;) {
 		int sj = 0, cj = 1024;
@@ -73,7 +76,8 @@ int main(int argc, char *argv[])
 		R(5, 8, cB, sB);
 
 		gettimeofday(&tv_e, NULL);
-		timersub(&tv_e, &tv_s, &tv_v);
+		timersub(&tv_e, &tv_s, &tv_calc);
+		tv_s = tv_e;
 
 		for (int k = 0; k < 1760; k++) {
 			putchar(k % 80 ? b[k] : 10);
@@ -81,19 +85,24 @@ int main(int argc, char *argv[])
 		putchar('\n');
 		fflush(stdout);
 
-		gettimeofday(&tv_s, NULL);
-		timersub(&tv_s, &tv_e, &tv_d);
+		gettimeofday(&tv_e, NULL);
+		timersub(&tv_e, &tv_s, &tv_draw);
 
-		uint64_t tt = ((tv_v.tv_sec + tv_d.tv_sec) * 1000000
-			+ tv_v.tv_usec + tv_d.tv_usec) / 1000;
+		uint64_t tt = ((tv_calc.tv_sec + tv_draw.tv_sec) * 1000000
+			+ tv_calc.tv_usec + tv_draw.tv_usec) / 1000;
 		uint64_t fps = 0;
 		if (tt != 0) {
 			fps = 1000000 / tt;
 		}
 
-		printf("calc:%d.%06ds, draw:%d.%06ds, fps:%d.%03d\n",
-			(int)tv_v.tv_sec, (int)tv_v.tv_usec,
-			(int)tv_d.tv_sec, (int)tv_d.tv_usec,
+		timersub(&tv_e, &demo_init, &tv_wall);
+		printf("%02d:%02d:%02d) calc:%d.%06ds draw:%d.%06ds "
+			"fps:%d.%03d  \n",
+			(int)(tv_wall.tv_sec / 3600),
+			(int)(tv_wall.tv_sec / 60) % 60,
+			(int)(tv_wall.tv_sec % 60),
+			(int)tv_calc.tv_sec, (int)tv_calc.tv_usec,
+			(int)tv_draw.tv_sec, (int)tv_draw.tv_usec,
 			(int)(fps / 1000), (int)(fps % 1000));
 		printf("\x1b[24A");
 	}
