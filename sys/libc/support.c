@@ -52,6 +52,7 @@ const k_syscall_func_t k_table_syscalls[MAX_SYSCALLS] = {
 	SYSCALL_P(SYS_getrandom, k_sys_wrap_getrandom),
 	SYSCALL_P(SYS_openat, k_sys_wrap_openat),
 	SYSCALL_P(SYS_close, k_sys_wrap_close),
+	SYSCALL_P(SYS_ioctl, k_sys_wrap_ioctl),
 	SYSCALL_P(SYS_read, k_sys_wrap_read),
 	SYSCALL_P(SYS_write, k_sys_wrap_write),
 	SYSCALL_P(SYS_writev, k_sys_wrap_writev),

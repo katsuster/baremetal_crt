@@ -59,6 +59,28 @@ struct k_file_desc *k_file_set_desc(int fd, struct k_file_desc *desc)
 	return olddesc;
 }
 
+int k_file_ioctl_nolock(struct k_file_desc *desc, unsigned int cmd, unsigned long arg)
+{
+	int ret = -EBADF;
+
+	if (desc->ops && desc->ops->ioctl) {
+		ret = desc->ops->ioctl(desc, cmd, arg);
+	}
+
+	return ret;
+}
+
+int k_file_ioctl(struct k_file_desc *desc, unsigned int cmd, unsigned long arg)
+{
+	int ret;
+
+	k_spinlock_lock(&desc->lock);
+	ret = k_file_ioctl_nolock(desc, cmd, arg);
+	k_spinlock_unlock(&desc->lock);
+
+	return ret;
+}
+
 ssize_t k_file_read_nolock(struct k_file_desc *desc, void *buf, size_t count)
 {
 	ssize_t ret = 0;

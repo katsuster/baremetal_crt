@@ -261,6 +261,19 @@ intptr_t k_sys_close(int fd)
 	return ret;
 }
 
+intptr_t k_sys_ioctl(unsigned int fd, unsigned int cmd, unsigned long arg)
+{
+	struct k_file_desc *desc = k_file_get_desc(fd);
+
+	if (!desc || !desc->ops || !desc->ops->ioctl) {
+		return -EBADF;
+	}
+
+	k_pri_dbg("sys_ioctl: fd:%d cmd:%d\n", fd, (int)cmd);
+
+	return k_file_ioctl(desc, cmd, arg);
+}
+
 intptr_t k_sys_read(int fd, void *buf, size_t count)
 {
 	struct k_file_desc *desc = k_file_get_desc(fd);

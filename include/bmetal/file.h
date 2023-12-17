@@ -32,6 +32,8 @@ struct k_file_desc {
 
 struct k_file_desc *k_file_get_desc(int fd);
 struct k_file_desc *k_file_set_desc(int fd, struct k_file_desc *desc);
+int k_file_ioctl_nolock(struct k_file_desc *desc, unsigned int cmd, unsigned long arg);
+int k_file_ioctl(struct k_file_desc *desc, unsigned int cmd, unsigned long arg);
 ssize_t k_file_read_nolock(struct k_file_desc *desc, void *buf, size_t count);
 ssize_t k_file_read(struct k_file_desc *desc, void *buf, size_t count);
 ssize_t k_file_write_nolock(struct k_file_desc *desc, const void *buf, size_t count);
