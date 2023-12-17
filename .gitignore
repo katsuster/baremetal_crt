@@ -11,6 +11,7 @@
 /test/daxpy
 /test/echo
 /test/flush
+/test/gpio
 /test/hello
 /test/hello_cpp
 /test/hello_eigen

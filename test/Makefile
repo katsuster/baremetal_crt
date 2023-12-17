@@ -90,7 +90,7 @@ endif
 
 ifeq ($(WITH_POSIX),y)
 BINS += \
-	sleep
+	gpio sleep
 endif
 
 ifeq ($(WITH_EIGEN),y)
@@ -121,6 +121,7 @@ CTYPE_OBJS = ctype.o
 DAXPY_OBJS = daxpy.o
 ECHO_OBJS = echo.o
 FLUSH_OBJS = flush.o
+GPIO_OBJS = gpio.o
 HELLO_OBJS = hello.o
 HELLO_CPP_OBJS = hello_cpp.o
 HELLO_EIGEN_OBJS = hello_eigen.o
@@ -148,7 +149,7 @@ OBJS = \
 	$(CRT_STRING_OBJS) \
 	$(CTYPE_OBJS) \
 	$(DAXPY_OBJS) \
-	$(ECHO_OBJS) $(FLUSH_OBJS) \
+	$(ECHO_OBJS) $(FLUSH_OBJS) $(GPIO_OBJS) \
 	$(HELLO_OBJS) $(HELLO_CPP_OBJS) $(HELLO_EIGEN_OBJS) \
 	$(HELLO_OPENSSL_OBJS) \
 	$(MALLOC_OBJS) \
@@ -187,6 +188,9 @@ echo: $(ECHO_OBJS)
 	$(CC) $(LDFLAGS) $^ $(LDADD) $(EXT_LDADD) -o $@
 
 flush: $(FLUSH_OBJS)
+	$(CC) $(LDFLAGS) $^ $(LDADD) $(EXT_LDADD) -o $@
+
+gpio: $(GPIO_OBJS)
 	$(CC) $(LDFLAGS) $^ $(LDADD) $(EXT_LDADD) -o $@
 
 hello: $(HELLO_OBJS)
