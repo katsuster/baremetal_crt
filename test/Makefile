@@ -28,19 +28,17 @@ WITH_EIGEN ?= n
 WITH_OPENBLAS ?= n
 WITH_OPENSSL ?= n
 
-# 32bit
-#APP_CFLAGS_RV  = -march=rv32im -mabi=ilp32 -mcmodel=medany
-#APP_LDFLAGS_RV = -march=rv32im -mabi=ilp32 -mcmodel=medany
+# 32bit newlib
 #APP_CFLAGS_RV  = -march=rv32imafc -mabi=ilp32f -mcmodel=medany
 #APP_LDFLAGS_RV = -march=rv32imafc -mabi=ilp32f -mcmodel=medany
 
-# 32bit glibc
+# 32bit libc
 #APP_CFLAGS_RV  = -march=rv32gc -mabi=ilp32d -mcmodel=medany
 #APP_LDFLAGS_RV = -march=rv32gc -mabi=ilp32d -mcmodel=medany
 #APP_CFLAGS_RV  = -march=rv32imac -mabi=ilp32 -mcmodel=medany
 #APP_LDFLAGS_RV = -march=rv32imac -mabi=ilp32 -mcmodel=medany
 
-# 64bit glibc
+# 64bit libc
 APP_CFLAGS_RV  = -march=rv64gc -mabi=lp64d -mcmodel=medany
 APP_LDFLAGS_RV = -march=rv64gc -mabi=lp64d -mcmodel=medany
 #APP_CFLAGS_RV  = -march=rv64imac -mabi=lp64 -mcmodel=medany
