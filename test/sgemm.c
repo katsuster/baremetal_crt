@@ -167,8 +167,9 @@ int main(int argc, char *argv[], char *envp[])
 	const float *a, *b;
 	float *c;
 	int check = 0, m, n, k, r;
+	int ret = 0;
 
-	printf("%s: sgemm start\n", argv[0]);
+	printf("%s: test sgemm start\n", argv[0]);
 	fflush(stdout);
 
 	dbgprintf("argc: %d\n", argc);
@@ -211,7 +212,6 @@ int main(int argc, char *argv[], char *envp[])
 
 	if (check) {
 		float *c_ex;
-		int pass = 1;
 
 		c_ex = malloc(m * n * sizeof(float));
 
@@ -234,14 +234,16 @@ int main(int argc, char *argv[], char *envp[])
 
 		r = check_result(c, c_ex, m, n, k);
 		if (r) {
-			pass = 0;
-		}
-
-		if (pass) {
-			printf("passed\n");
+			ret = 1;
 		}
 
 		free(c_ex);
+	}
+
+	if (ret == 0) {
+		printf("%s: SUCCESS\n", argv[0]);
+	} else {
+		printf("%s: FAILED\n", argv[0]);
 	}
 
 	return 0;

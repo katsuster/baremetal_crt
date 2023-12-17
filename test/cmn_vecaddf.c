@@ -87,9 +87,6 @@ int check32(const float *a, const float *b, const float *c, float *expect, int n
 			ret = -1;
 		}
 	}
-	if (ret == 0) {
-		dbgprintf("passed\n");
-	}
 
 	return ret;
 }
@@ -105,9 +102,6 @@ int check64(const double *a, const double *b, const double *c, double *expect, i
 			printf("failed, %f=!%f (expected)\n", c[i], expect[i]);
 			ret = -1;
 		}
-	}
-	if (ret == 0) {
-		dbgprintf("passed\n");
 	}
 
 	return ret;

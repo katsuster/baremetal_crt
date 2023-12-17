@@ -103,8 +103,9 @@ int main(int argc, char *argv[], char *envp[])
 {
 	float *a, *x, *y;
 	int *n, check = 0;
+	int ret = 0;
 
-	printf("%s: saxpy start\n", argv[0]);
+	printf("%s: test saxpy start\n", argv[0]);
 
 	printf("argc: %d\n", argc);
 	if (argc > 4) {
@@ -131,19 +132,20 @@ int main(int argc, char *argv[], char *envp[])
 	}
 
 	if (check) {
-		int pass = 1;
-
 		saxpy_scalar(*a, x, test_y_expect, *n);
 
 		for (int i = 0; i < N; i++) {
 			if (!fp_eq(test_y_expect[i], y[i], 1e-6)) {
 				printf("failed, %f=!%f\n", test_y_expect[i], y[i]);
-				pass = 0;
+				ret = 1;
 			}
 		}
-		if (pass) {
-			printf("passed\n");
-		}
+	}
+
+	if (ret == 0) {
+		printf("%s: SUCCESS\n", argv[0]);
+	} else {
+		printf("%s: FAILED\n", argv[0]);
 	}
 
 	return 0;

@@ -32,8 +32,9 @@ int main(int argc, char *argv[], char *envp[])
 	double *c;
 	const int *n;
 	int check = 0;
+	int ret = 0;
 
-	printf("%s: vecadd start\n", argv[0]);
+	printf("%s: test vecadd start\n", argv[0]);
 
 	dbgprintf("argc: %d\n", argc);
 	if (argc > 4) {
@@ -55,7 +56,13 @@ int main(int argc, char *argv[], char *envp[])
 
 	dump64(a, b, c, 10);
 	if (check) {
-		check64(a, b, c, test_c_expect, N);
+		ret = check64(a, b, c, test_c_expect, N);
+	}
+
+	if (ret == 0) {
+		printf("%s: SUCCESS\n", argv[0]);
+	} else {
+		printf("%s: FAILED\n", argv[0]);
 	}
 
 	return 0;
