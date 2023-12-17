@@ -14,6 +14,9 @@ static const struct k_file_ops file_stdio_ops = {
 	.write = k_file_stdio_write,
 };
 
+//TODO: tentative, use GPIO
+extern const struct k_file_ops gpio_line_ops;
+
 static struct k_file_desc fds[CONFIG_MAX_FD] = {
 	/* stdin */
 	[0] = {
@@ -29,6 +32,13 @@ static struct k_file_desc fds[CONFIG_MAX_FD] = {
 	[2] = {
 		.ops = &file_stdio_ops,
 	},
+
+	/* TODO: tentative, GPIO ch 0 */
+#ifdef CONFIG_GPIO
+	[3] = {
+		.ops = &gpio_line_ops,
+	},
+#endif
 };
 
 struct k_file_desc *k_file_get_desc(int fd)
@@ -154,6 +164,11 @@ int k_file_stdio_init(struct k_proc_info *pi)
 	k_file_set_desc(0, &fds[0]);
 	k_file_set_desc(1, &fds[1]);
 	k_file_set_desc(2, &fds[2]);
+
+	/* TODO: tentative, GPIO ch 0 */
+#ifdef CONFIG_GPIO
+	k_file_set_desc(3, &fds[3]);
+#endif
 
 	return 0;
 }

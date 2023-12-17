@@ -6,6 +6,9 @@
 #include <bmetal/sys/stdio.h>
 #include <bmetal/sys/string.h>
 
+//TODO: tentative: can manage multiple gpio device
+struct k_gpio_device *k_gpio_system = NULL;
+
 int k_gpio_get_config(struct k_gpio_device *gpio, struct k_gpio_config *conf)
 {
 	const struct k_gpio_driver *drv = k_gpio_get_drv(gpio);
@@ -62,6 +65,11 @@ int k_gpio_add_device(struct k_gpio_device *gpio, struct k_bus *parent)
 	r = k_device_add(k_gpio_to_dev(gpio), parent);
 	if (IS_ERROR(r)) {
 		return r;
+	}
+
+	//TODO: can manage multiple gpio device
+	if (!k_gpio_system) {
+		k_gpio_system = gpio;
 	}
 
 	return 0;

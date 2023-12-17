@@ -26,7 +26,7 @@ struct k_gpio_device;
 
 struct k_gpio_driver_ops {
 	int (*get)(struct k_gpio_device *gpio, int ch);
-	void (*set)(struct k_gpio_device *gpio, int ch, int value);
+	int (*set)(struct k_gpio_device *gpio, int ch, int value);
 	int (*get_config)(struct k_gpio_device *gpio, struct k_gpio_config *conf);
 	int (*set_config)(struct k_gpio_device *gpio, const struct k_gpio_config *conf);
 };

@@ -266,7 +266,7 @@ intptr_t k_sys_ioctl(unsigned int fd, unsigned int cmd, unsigned long arg)
 	struct k_file_desc *desc = k_file_get_desc(fd);
 
 	if (!desc || !desc->ops || !desc->ops->ioctl) {
-		return -EBADF;
+		return -ENOTTY;
 	}
 
 	k_pri_dbg("sys_ioctl: fd:%d cmd:%d\n", fd, (int)cmd);
