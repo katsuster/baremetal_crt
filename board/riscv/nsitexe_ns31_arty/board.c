@@ -4,6 +4,7 @@
 #include <bmetal/init.h>
 #include <bmetal/driver/clk.h>
 #include <bmetal/driver/cpu.h>
+#include <bmetal/driver/gpio.h>
 #include <bmetal/driver/intc.h>
 #include <bmetal/driver/timer.h>
 #include <bmetal/driver/uart.h>
@@ -159,6 +160,24 @@ static struct k_uart_device uart0 = {
 	},
 };
 
+const static struct k_device_config gpio0_conf[] = {
+	PROP("reg", 0xe4001000),
+	PROP("reg-size", 0x1000),
+	PROP("interrupts", UPTR("plic"), 1),
+	{0},
+};
+
+static k_gpio_priv_t gpio0_priv;
+static struct k_gpio_device gpio0 = {
+	.base = {
+		.name = "gpio0",
+		.type_vendor = "xilinx",
+		.type_device = "gpio_v2",
+		.conf = gpio0_conf,
+		.priv = &gpio0_priv,
+	},
+};
+
 static int board_ns31_arty_init(void)
 {
 	k_cpu_add_device(&cpu[0], k_bus_get_root());
@@ -168,6 +187,7 @@ static int board_ns31_arty_init(void)
 	k_clk_add_device(&clk, k_bus_get_root());
 	k_timer_add_device(&clint_timer, k_bus_get_root());
 	k_uart_add_device(&uart0, k_bus_get_root(), 1);
+	k_gpio_add_device(&gpio0, k_bus_get_root());
 
 	k_uart_set_default_console(&uart0);
 
