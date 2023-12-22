@@ -383,8 +383,10 @@ intptr_t k_sys_brk(void *addr)
 		/* Expand: should zero clear by specification */
 		k_memset(brk_cur, 0, caddr - brk_cur);
 	} else {
+#ifdef CONFIG_BRK_CLEAR_AT_SHRINK
 		/* Shrink: zero clear for security */
 		k_memset(addr, 0, brk_cur - caddr);
+#endif /* CONFIG_BRK_CLEAR_AT_SHRINK */
 	}
 	k_mem_brk_set_cur(addr);
 	k_mem_brk_unlock();
