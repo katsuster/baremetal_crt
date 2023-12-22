@@ -274,6 +274,29 @@ intptr_t k_sys_ioctl(unsigned int fd, unsigned int cmd, unsigned long arg)
 	return k_file_ioctl(desc, cmd, arg);
 }
 
+intptr_t k_sys_poll(struct pollfd *fds, unsigned int nfds, int timeout)
+{
+	if (!fds) {
+		return -EFAULT;
+	}
+
+	//TODO: allocate descriptors array
+
+	for (unsigned int i = 0; i < nfds; i++) {
+		int fd = fds[i].fd;
+		struct k_file_desc *desc = k_file_get_desc(fd);
+
+		if (!desc || !desc->ops || !desc->ops->poll) {
+			return -EBADF;
+		}
+
+		k_pri_dbg("sys_poll: %d: fd:%d nfds:%d timeout:%d\n", i, fd, (int)nfds, timeout);
+	}
+
+	//return k_file_poll(descs, nfds, timeout);
+	return -ENOTSUP;
+}
+
 intptr_t k_sys_read(int fd, void *buf, size_t count)
 {
 	struct k_file_desc *desc = k_file_get_desc(fd);

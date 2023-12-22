@@ -12,6 +12,7 @@
 #include <bmetal/syscall_num.h>
 #include <bmetal/sys/resource.h>
 #include <bmetal/sys/sched.h>
+#include <bmetal/sys/poll.h>
 #include <bmetal/sys/time.h>
 #include <bmetal/sys/uio.h>
 
@@ -101,6 +102,7 @@ SYSCALL_WRAP3(getrandom, void *, buf, size_t, buflen, unsigned int, flags);
 SYSCALL_WRAP4(openat, int, dirfd, const char *, pathname, int, flags, mode_t, mode);
 SYSCALL_WRAP1(close, int, fd);
 SYSCALL_WRAP3(ioctl, unsigned int, fd, unsigned int, cmd, unsigned long, arg);
+SYSCALL_WRAP3(poll, struct pollfd *, fds, unsigned int, nfds, int, timeout);
 SYSCALL_WRAP3(read, int, fd, void *, buf, size_t, count);
 SYSCALL_WRAP3(write, int, fd, const void *, buf, size_t, count);
 SYSCALL_WRAP3(writev, int, fd, const struct iovec *, iov, int, iovcnt);
