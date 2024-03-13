@@ -7,11 +7,9 @@ This is an example of cmake configuration for device side runtime.
 
 [source,sh]
 ----
-$ mkdir build
-$ cd build
-$ cmake ../ -G Ninja \
+$ cmake ./ -G Ninja -B build \
   -DCMAKE_BUILD_TYPE=RelWithDebInfo \
-  -DCMAKE_INSTALL_PREFIX=../test/sysroot/ \
+  -DCMAKE_INSTALL_PREFIX=./test/sysroot/ \
   -DARCH=riscv \
   -DCROSS_COMPILE=riscv64-unknown-elf- \
   -DCC=gcc \
@@ -50,7 +48,7 @@ Debug, Release, RelWithDebInfo, MinSizeRel
 
 == Device side test applications
 
-This is an example of cmake configuration for device side runtime.
+This is an example of make configuration for device side runtime.
 
 [source,sh]
 ----
