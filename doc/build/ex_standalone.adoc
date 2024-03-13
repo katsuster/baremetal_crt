@@ -24,6 +24,14 @@ Build and install runtime libraries to sysroot.
 $ ninja -C build install
 ----
 
+Build documents by Doxygen and stored it to build/html directory.
+
+[source,sh]
+----
+$ ninja -C build doxygen
+----
+
+
 === Build device side application
 
 [source,sh]
@@ -96,6 +104,14 @@ Build and install runtime libraries to sysroot.
 ----
 $ ninja -C build install
 ----
+
+Build documents by Doxygen and stored it to build/html directory.
+
+[source,sh]
+----
+$ ninja -C build doxygen
+----
+
 
 === Build device side application
 
