@@ -24,6 +24,7 @@ WITH_MT    ?= n
 endif
 
 WITH_CXX ?= n
+WITH_OPENMP ?= n
 WITH_EIGEN ?= n
 WITH_OPENBLAS ?= n
 WITH_OPENSSL ?= n
@@ -86,6 +87,15 @@ BINS += \
 	hello_cpp
 endif
 
+ifeq ($(WITH_OPENMP),y)
+BINS += \
+	hello_openmp
+EXT_CFLAGS += \
+	-fopenmp
+EXT_LDADD += \
+	-lgomp
+endif
+
 ifeq ($(WITH_POSIX),y)
 BINS += \
 	gpio sleep
@@ -123,6 +133,7 @@ GPIO_OBJS = gpio.o
 HELLO_OBJS = hello.o
 HELLO_CPP_OBJS = hello_cpp.o
 HELLO_EIGEN_OBJS = hello_eigen.o
+HELLO_OPENMP_OBJS = hello_openmp.o
 HELLO_OPENSSL_OBJS = hello_openssl.o
 MALLOC_OBJS = malloc.o
 MATHF_OBJS = mathf.o
@@ -198,6 +209,9 @@ hello_cpp: $(HELLO_CPP_OBJS)
 	$(CXX) $(LDFLAGS) $^ $(LDADD) $(EXT_LDADD) -o $@
 
 hello_eigen: $(HELLO_EIGEN_OBJS)
+	$(CXX) $(LDFLAGS) $^ $(LDADD) $(EXT_LDADD) -o $@
+
+hello_openmp: $(HELLO_OPENMP_OBJS)
 	$(CXX) $(LDFLAGS) $^ $(LDADD) $(EXT_LDADD) -o $@
 
 hello_openssl: $(HELLO_OPENSSL_OBJS)
