@@ -15,6 +15,7 @@
 /test/hello
 /test/hello_cpp
 /test/hello_eigen
+/test/hello_openmp
 /test/hello_openssl
 /test/malloc
 /test/mathf
