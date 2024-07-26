@@ -228,7 +228,7 @@ static int clk_prci_find_divr(struct k_clk_device *clk, struct clk_prci_pllcfg *
 static int clk_prci_update_pllcfg(struct k_clk_device *clk, uint64_t target, uint64_t *freq_found, int off)
 {
 	struct k_device *dev = k_clk_to_dev(clk);
-	struct clk_prci_pllcfg conf;
+	struct clk_prci_pllcfg conf = {0};
 	uint32_t v;
 	int r;
 
