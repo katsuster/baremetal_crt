@@ -1,6 +1,7 @@
 /* SPDX-License-Identifier: Apache-2.0 */
 
 #include <bmetal/arch/cpu.h>
+#include <bmetal/binding/intc/riscv/rv_priv.h>
 #include <bmetal/syscall.h>
 
 .globl k_trap_start
@@ -8,13 +9,10 @@
 .globl k_trap_end
 .type k_trap_end, @function
 
-#define XCAUSE_SYSCALL_M    0xb
-#define XSTATUS_MIE         BIT(3)
-
 .section ".text", "ax"
 .align 2
 k_trap_start:
-	csrrw sp, mscratch, sp
+	csrrw sp, CSR_XSCRATCH, sp
 	beq   sp, x0, k_trap_in_kernel
 
 k_trap_in_user:
@@ -23,11 +21,11 @@ k_trap_in_user:
 	store_callee_regs
 	store_special_regs
 	store_status_regs t0
-	csrr  t0, mscratch
+	csrr  t0, CSR_XSCRATCH
 	OP_ST t0, REGOFF_SP(sp)
 	addi  t0, sp, REGOFF_ALL
 	OP_ST t0, REGOFF_MSCRATCH(sp)
-	csrw  mscratch, x0
+	csrw  CSR_XSCRATCH, x0
 
 	# Save pointer of user regs
 	# This may break caller-saved regs
@@ -45,7 +43,7 @@ k_trap_in_user:
 	j     k_trap_common
 
 k_trap_in_kernel:
-	csrrw sp, mscratch, sp
+	csrrw sp, CSR_XSCRATCH, sp
 	addi  sp, sp, -REGOFF_ALL
 	store_caller_regs
 	store_callee_regs
@@ -57,8 +55,12 @@ k_trap_in_kernel:
 
 k_trap_common:
 	# Check syscall
-	csrr t0, mcause
-	li   t1, XCAUSE_SYSCALL_M
+	csrr t0, CSR_XCAUSE
+#ifdef CONFIG_RISCV_MACHINE_MODE
+	li   t1, RV_CAUSE_EXC_ECALL_M
+#else /* CONFIG_RISCV_MACHINE_MODE */
+	li   t1, RV_CAUSE_EXC_ECALL_S
+#endif /* CONFIG_RISCV_MACHINE_MODE */
 	beq  t0, t1, k_trap_syscall
 
 	# Check interrupt (mcause MSB = 1) or exception (MSB = 0)
@@ -71,7 +73,7 @@ k_trap_common:
 
 k_trap_syscall:
 	# Return to next instruction of ecall
-	csrr  t0, mepc
+	csrr  t0, CSR_XEPC
 	addi  t0, t0, 4
 	OP_ST t0, REGOFF_MEPC(sp)
 
@@ -106,19 +108,19 @@ k_trap_syscall_unknown:
 	j     k_trap_syscall_end
 
 k_trap_interrupt:
-	csrr a0, mcause
+	csrr a0, CSR_XCAUSE
 	call k_arch_riscv_interrupt
 	j    k_trap_end
 
 k_trap_exception:
-	csrr a0, mcause
+	csrr a0, CSR_XCAUSE
 	call k_arch_riscv_exception
 	j    k_trap_end
 
 k_trap_end:
 	# Disable interrupt
-	li   t0, XSTATUS_MIE
-	csrc mstatus, t0
+	li   t0, BIT(RV_STATUS_IE)
+	csrc CSR_XSTATUS, t0
 
 	load_status_regs t0
 	load_caller_regs

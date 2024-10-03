@@ -20,6 +20,28 @@
 #  define MNSTATUS_NMIE       0x8
 #endif /* CONFIG_RISCV_RNMI */
 
+#ifdef CONFIG_RISCV_MACHINE_MODE
+#  define CSR_XSTATUS         mstatus
+#  define CSR_XIE             mie
+#  define CSR_XTVEC           mtvec
+
+#  define CSR_XSCRATCH        mscratch
+#  define CSR_XEPC            mepc
+#  define CSR_XCAUSE          mcause
+#  define CSR_XTVAL           mtval
+#  define CSR_XIP             mip
+#else /* CONFIG_RISCV_MACHINE_MODE */
+#  define CSR_XSTATUS         sstatus
+#  define CSR_XIE             sie
+#  define CSR_XTVEC           stvec
+
+#  define CSR_XSCRATCH        sscratch
+#  define CSR_XEPC            sepc
+#  define CSR_XCAUSE          scause
+#  define CSR_XTVAL           stval
+#  define CSR_XIP             sip
+#endif /* CONFIG_RISCV_MACHINE_MODE */
+
 #ifdef CONFIG_64BIT
 #  define REGSIZE     8
 #  define REGOFF      3
@@ -32,6 +54,7 @@
 #  define OP_ST       sw
 #endif /* CONFIG_64BIT */
 
+/* For struct k_arch_riscv_user_regs */
 #define REGOFF_RA         (REGSIZE * 0)
 #define REGOFF_SP         (REGSIZE * 1)
 #define REGOFF_GP         (REGSIZE * 2)
@@ -68,6 +91,11 @@
 #define REGOFF_MSCRATCH   (REGSIZE * 33)
 
 #define REGOFF_ALL        (REGSIZE * 34)
+
+/* For struct k_arch_riscv_per_cpu_regs */
+#define CPUREGOFF_HARTID     (REGSIZE * 0)
+
+#define CPUREGOFF_ALL        (REGSIZE * 2)
 
 
 #ifdef __ASSEMBLER__
@@ -121,11 +149,11 @@
 .endm
 
 .macro store_status_regs tmp
-	csrr  \tmp, mepc
+	csrr  \tmp, CSR_XEPC
 	OP_ST \tmp, REGOFF_MEPC(sp)
-	csrr  \tmp, mstatus
+	csrr  \tmp, CSR_XSTATUS
 	OP_ST \tmp, REGOFF_MSTATUS(sp)
-	csrr  \tmp, mscratch
+	csrr  \tmp, CSR_XSCRATCH
 	OP_ST \tmp, REGOFF_MSCRATCH(sp)
 .endm
 
@@ -143,11 +171,11 @@
 
 .macro load_status_regs tmp
 	OP_LD \tmp, REGOFF_MEPC(sp)
-	csrw  mepc, \tmp
+	csrw  CSR_XEPC, \tmp
 	OP_LD \tmp, REGOFF_MSTATUS(sp)
-	csrw  mstatus, \tmp
+	csrw  CSR_XSTATUS, \tmp
 	OP_LD \tmp, REGOFF_MSCRATCH(sp)
-	csrw  mscratch, \tmp
+	csrw  CSR_XSCRATCH, \tmp
 .endm
 
 #endif /* __ASSEMBLER__ */
@@ -208,6 +236,10 @@ typedef struct k_arch_riscv_user_regs {
 	uintptr_t mstatus;
 	uintptr_t mscratch;
 } k_arch_riscv_user_regs_t;
+
+typedef struct k_arch_riscv_per_cpu_regs {
+	uintptr_t hartid;
+} k_arch_riscv_per_cpu_regs_t;
 
 int k_arch_riscv_get_cpu_id(void);
 void k_arch_riscv_wait_interrupt(void);

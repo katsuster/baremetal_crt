@@ -17,11 +17,11 @@ k_arch_riscv_copy_current_context:
 	OP_CALLEE_REGS(OP_ST, a0)
 	OP_SPECIAL_REGS(OP_ST, a0)
 
-	csrr  t0, mepc
+	csrr  t0, CSR_XEPC
 	OP_ST t0, REGOFF_MEPC(a0)
-	csrr  t0, mstatus
+	csrr  t0, CSR_XSTATUS
 	OP_ST t0, REGOFF_MSTATUS(a0)
-	csrr  t0, mscratch
+	csrr  t0, CSR_XSCRATCH
 	OP_ST t0, REGOFF_MSCRATCH(a0)
 	OP_LD t0, REGOFF_T0(a0)
 

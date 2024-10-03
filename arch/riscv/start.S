@@ -15,12 +15,12 @@ k_reset:
 #endif /* CONFIG_RISCV_RNMI */
 
 	# Disable global, all interrupts
-	csrw mstatus, zero
-	csrw mie, zero
+	csrw CSR_XSTATUS, zero
+	csrw CSR_XIE, zero
 
 	# Interrupt handler
 	la   t0, k_trap_start
-	csrw mtvec, t0
+	csrw CSR_XTVEC, t0
 
 	# Global pointer
 .option push
@@ -33,10 +33,15 @@ k_reset:
 	li    t1, -1
 	OP_ST t1, (t0)
 
+	# In boot phase some registers hold a special meaning:
+	#   a0: hartid
+#ifdef CONFIG_RISCV_MACHINE_MODE
+	csrr a0, mhartid
+#endif /* CONFIG_RISCV_MACHINE_MODE */
+
 	# Branch to main/sub function
-	csrr t0, mhartid
 	li   t1, MHARTID_MAIN
-	beq  t0, t1, k_start_for_main
+	beq  a0, t1, k_start_for_main
 	j    k_start_for_sub
 
 k_start_for_main:
@@ -47,7 +52,7 @@ k_start_for_main:
 	la   t0, k_stack_intr
 	li   t1, CONFIG_INTR_STACK_SIZE
 	add  t0, t1, t0
-	csrw mscratch, t0
+	csrw CSR_XSCRATCH, t0
 
 	call k_start_for_common
 	call k_init_system
@@ -60,7 +65,6 @@ k_start_for_main:
 
 k_start_for_sub:
 	# Wait for notify
-	csrr  t0, mhartid
 1:
 	# Reduce memory bus bandwidth
 	nop
@@ -70,14 +74,15 @@ k_start_for_sub:
 	fence ir, ir
 	la    t1, k_boot_proc
 	OP_LD t1, (t1)
-	bne   t0, t1, 1b
+	# a0 holds hartid
+	bne   a0, t1, 1b
 
 	# Set stack/thread pointer
 	la    t0, k_boot_sp_idle
 	OP_LD sp, (t0)
 	la    t0, k_boot_sp_intr
 	OP_LD t0, (t0)
-	csrw  mscratch, t0
+	csrw  CSR_XSCRATCH, t0
 	la    t0, k_boot_done
 	li    t1, 1
 	OP_ST t1, (t0)
@@ -92,14 +97,26 @@ k_start_for_sub:
 	j   1b
 
 k_start_for_common:
+	# Allocate a area for per cpu registers
+	# Use bottom of the stack for interrupt
+	csrr  t0, CSR_XSCRATCH
+	li    t1, CPUREGOFF_ALL
+	sub   t0, t0, t1
+	csrw  CSR_XSCRATCH, t0
+	mv    tp, t0
+
+	# Save per cpu registers
+	# a0 holds hartid
+	OP_ST a0, CPUREGOFF_HARTID(tp)
+
 	# Enable FPU
 #ifdef CONFIG_FPU
 	li   t0, RV_STATUS_FS_DIRTY
-	csrs mstatus, t0
+	csrs CSR_XSTATUS, t0
 	csrw fcsr, x0
 #endif
 #ifdef CONFIG_VPU
 	li   t0, RV_STATUS_VS_DIRTY
-	csrs mstatus, t0
+	csrs CSR_XSTATUS, t0
 #endif
 	ret
